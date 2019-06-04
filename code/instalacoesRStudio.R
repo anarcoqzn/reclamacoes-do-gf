@@ -1,3 +1,5 @@
+install.packages("pillar")
+install.packages("tibble")
 install.packages("tidyverse")
 install.packages("tidytext")
 install.packages("here")
@@ -7,5 +9,6 @@ install.packages("broom")
 install.packages("rvest")
 install.packages("stringr")
 install.packages("GGally")
+install.packages("rlang")
 
 

@@ -4,6 +4,8 @@ output: html_notebook
 ---
 
 ```{r warning=FALSE}
+library(pillar)
+library(tibble)
 library(tidyverse)
 library(tidytext)
 library(here)
@@ -37,7 +39,7 @@ glimpse(op30)
 ```
 
 Precisamos de um dataframe onde cada observacao eh uma palavra. 
-
+ridades geradas em insatisfações que estejam no intervalo [1,5]. Lembre que quanto menor o sentimento gerado, mais negativo ele é, então, maior o grau de insatisfação. Por exemplo, um sentimento de -3 deve gerar um grau de insatisfação maior do que um sentimento de 7. 
 ```{r separa}
 palavra_a_palavra = reclamacoes %>% 
     select(id, reclamacao) %>% 
