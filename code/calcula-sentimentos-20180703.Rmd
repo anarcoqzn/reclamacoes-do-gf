@@ -14,16 +14,36 @@ theme_set(theme_bw())
 ```
 
 ```{r carrega}
-reclamacoes = read_csv(here("data/3-avaliacao-humana/reclamacoes-avaliadas-20181113.csv"))
+avaliacoes <- read.csv(file = "/home/anarcoqzn/metodologia/reclamacoes-do-gf/data/3-avaliacao-humana/avaliacoes20190515.csv")
+reclamacoes <-  read_csv(file = "/home/anarcoqzn/metodologia/reclamacoes-do-gf/data/1-reclamacoes-selecionadas/reclamacoes-avaliadas.csv")
 
-#reclamacoes = reclamacoes_raw %>% 
-#    mutate(
-#        nome_orgao_site = orgao,
-#        orgao = str_split(link, "/") %>% map_chr(~ .[[5]])
-#    ) %>% 
-#    filter(orgao %in% c("inss-ministerio-da-previdencia-social", #"anac-agencia-nacional-de-aviacao-civil")) %>% 
-#    mutate(id = 1:n(), 
-#           grupo_avaliando = id %% 6 + 1) 
+avaliacoes <- avaliacoes %>% 
+    select(avaliador = `Matricula`, 
+           id = `ID.da.reclamação`, 
+           insatisfacao = `Grau.de.insatisfação`)
+
+avaliacoes %>% 
+    filter((id %in% 1:5 ))
+
+moda <- function(v) {
+    uniqv <- unique(v)
+    uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+avaliacao <- avaliacoes %>% select(id, insatisfacao) %>% 
+    group_by(id) %>% 
+    summarise(grau_insatisfacao = moda(insatisfacao), 
+              avaliadores = n(),
+              range.avaliacoes = (max(insatisfacao) - min(insatisfacao)))
+
+reclamacoes <- reclamacoes %>% mutate(reclamacao.length = str_length(reclamacao),
+                                      titulo.length = str_length(titulo))
+
+# insere coluna com número de letras em capslock
+reclamacoes$numero.de.capslock <- str_count(reclamacoes$reclamacao, "\\b[A-Z]{2,}\\b")
+
+reclamacoes_avaliacoes <- left_join(reclamacoes, avaliacao, 
+                         by = c("id" = "id"))
 ```
 
 O processo de estimativa sera muito baseado em https://sillasgonzaga.github.io/2017-09-23-sensacionalista-pt01/ . 
