@@ -89,3 +89,17 @@ sentimentos %>%
     write_csv(here("data/5-sentimentos/sentimento.csv"))
 ```
 
+
+```{r converte sentimentos op_30 e sent -> [1:5]}
+
+
+
+conv_op_30 <- function(value){
+    ((value - max(sentimentos$sentimento_op30))/(min(sentimentos$sentimento_op30)-max(sentimentos$sentimento_op30)))*4 + 1 
+}
+
+conv_sent <- function(value){
+    ((value - max(sentimentos$sentimento_sent))/(min(sentimentos$sentimento_sent)-max(sentimentos$sentimento_sent)))*4 + 1 
+}
+
+```
