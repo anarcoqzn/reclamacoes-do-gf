@@ -17,8 +17,8 @@ avaliacoes <- avaliacoes %>%
          insatisfacao = `Grau.de.insatisfação`)
 
 #calcular insatifação com Moda
-avaliacoes %>% 
-  filter((id %in% 1:5 ))
+avaliacoes <- avaliacoes %>% 
+  filter((insatisfacao %in% 1:5 ))
 
 moda <- function(v) {
   uniqv <- unique(v)
@@ -90,31 +90,14 @@ reclamacoes_avaliacoes %>% ggplot(aes(x=insatisfacao_op_30, y=reclamacao.length)
 reclamacoes_avaliacoes %>% ggplot(aes(x=insatisfacao_sent, y=reclamacao.length)) + geom_point()
 
 comparativo <- cbind(reclamacoes_avaliacoes$grau_insatisfacao,reclamacoes_avaliacoes$insatisfacao_op_30,reclamacoes_avaliacoes$insatisfacao_sent)
-comparativo <- cbind(comparativo, 0,1)
+comparativo <- cbind(comparativo, 0,0)
 for (i in c(1:60)){
     v1 <- comparativo[i,1]
-    v2 <- round(comparativo[i,2],0)
+    v2 <- comparativo[i,2]
     
-    if(v1 == v2){
-        comparativo[i,4] = 0
-        
-    }else if(v1 < v2){
-        comparativo[i,4] = -1
-        
-    }else if(v1 > v2){
-        comparativo[i,4] = 1
-        
-    }
+    comparativo[i,4] <- (v2 - v1)^2
     
-    v2 <- round(comparativo[i,3],0)
+    v2 <- comparativo[i,3]
     
-    if(v1 == v2){
-        comparativo[i,5] = 0
-        
-    } else if(v1 < v2){
-        comparativo[i,5] = -1
-
-    } else if(v1 > v2){
-        comparativo[i,5] = 1
-    }
+    comparativo[i,5] <- (v2 - v1)^2
 }
