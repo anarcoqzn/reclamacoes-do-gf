@@ -7,8 +7,8 @@ library(lexiconPT)
 theme_set(theme_bw())
 
 #Selecionar arquivos
-avaliacoes <- read.csv(file = "/home/mariasbc/Área de Trabalho/Metodologia/reclamacoes-do-gf/data/3-avaliacao-humana/avaliacoes20190515.csv")
-reclamacoes <-  read_csv(file = "/home/mariasbc/Área de Trabalho/Metodologia/reclamacoes-do-gf/data/1-reclamacoes-selecionadas/reclamacoes-avaliadas.csv")
+avaliacoes <- read.csv(file = "./data/3-avaliacao-humana/avaliacoes20190515.csv")
+reclamacoes <-  read_csv(file = "./data/1-reclamacoes-selecionadas/reclamacoes-avaliadas.csv")
 
 #Mudar nome de colunas de avaliacoes
 avaliacoes <- avaliacoes %>% 
@@ -88,3 +88,33 @@ reclamacoes_avaliacoes["insatisfacao_sent"] <- sentimentos["conv_sent"]
 
 reclamacoes_avaliacoes %>% ggplot(aes(x=insatisfacao_op_30, y=reclamacao.length)) + geom_point()
 reclamacoes_avaliacoes %>% ggplot(aes(x=insatisfacao_sent, y=reclamacao.length)) + geom_point()
+
+comparativo <- cbind(reclamacoes_avaliacoes$grau_insatisfacao,reclamacoes_avaliacoes$insatisfacao_op_30,reclamacoes_avaliacoes$insatisfacao_sent)
+comparativo <- cbind(comparativo, 0,1)
+for (i in c(1:60)){
+    v1 <- comparativo[i,1]
+    v2 <- round(comparativo[i,2],0)
+    
+    if(v1 == v2){
+        comparativo[i,4] = 0
+        
+    }else if(v1 < v2){
+        comparativo[i,4] = -1
+        
+    }else if(v1 > v2){
+        comparativo[i,4] = 1
+        
+    }
+    
+    v2 <- round(comparativo[i,3],0)
+    
+    if(v1 == v2){
+        comparativo[i,5] = 0
+        
+    } else if(v1 < v2){
+        comparativo[i,5] = -1
+
+    } else if(v1 > v2){
+        comparativo[i,5] = 1
+    }
+}
