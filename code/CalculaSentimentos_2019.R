@@ -7,16 +7,16 @@ library(lexiconPT)
 theme_set(theme_bw())
 
 #Selecionar arquivos
-avaliacoes <- read.csv(file = "./data/3-avaliacao-humana/avaliacoes20190515.csv")
-reclamacoes <-  read_csv(file = "./data/1-reclamacoes-selecionadas/reclamacoes-avaliadas.csv")
+avaliacoes <- read.csv(file = "C:/Users/Suela/Desktop/metodologia/reclamacoes-do-gf/data/3-avaliacao-humana/avaliacoes20190515.csv")
+reclamacoes <-  read_csv(file = "C:/Users/Suela/Desktop/metodologia/reclamacoes-do-gf/data/1-reclamacoes-selecionadas/reclamacoes-avaliadas.csv")
 
 #Mudar nome de colunas de avaliacoes
 avaliacoes <- avaliacoes %>% 
   select(avaliador = `Matricula`, 
-         id = `ID.da.reclamação`, 
-         insatisfacao = `Grau.de.insatisfação`)
+         id = `ID.da.reclamacao`, 
+         insatisfacao = `Grau.de.insatisfacao`)
 
-#calcular insatifação com Moda
+#calcular insatifacao com Moda
 avaliacoes <- avaliacoes %>% 
   filter((insatisfacao %in% 1:5 ))
 
@@ -72,7 +72,7 @@ sentimentos = palavras_com_sentimento %>%
             palavras = n())
 
 sentimentos %>% 
-  write_csv(here("data/5-sentimentos/sentimento.csv"))
+  write_csv(here("metodologia/reclamacoes-do-gf/data/5-sentimentos/sentimento.csv"))
 
 #Converter em um intervalo de [1:5]
 sentimentos["conv_op_30"] <- 
@@ -82,13 +82,14 @@ sentimentos["conv_sent"] <-
   ((sentimentos$sentimento_sent - max(sentimentos$sentimento_sent))/(min(sentimentos$sentimento_sent)-max(sentimentos$sentimento_sent)))*4 + 1 
 
 
-#Pergunta 1: Existe alguma relação entre o tamanho da reclamação e o seu grau de insatisfação?
+
+#Pergunta 1: Existe alguma relação entre o tamanho da reclamacao e o seu grau de insatisfacao?
 reclamacoes_avaliacoes["insatisfacao_op_30"] <- sentimentos["conv_op_30"]
 reclamacoes_avaliacoes["insatisfacao_sent"] <- sentimentos["conv_sent"]
-
 reclamacoes_avaliacoes %>% ggplot(aes(x=insatisfacao_op_30, y=reclamacao.length)) + geom_point()
 reclamacoes_avaliacoes %>% ggplot(aes(x=insatisfacao_sent, y=reclamacao.length)) + geom_point()
 
+#Calcula erro atrav�s de comparativo
 comparativo <- cbind(reclamacoes_avaliacoes$grau_insatisfacao,reclamacoes_avaliacoes$insatisfacao_op_30,reclamacoes_avaliacoes$insatisfacao_sent)
 comparativo <- cbind(comparativo, 0,0)
 for (i in c(1:60)){
@@ -101,3 +102,7 @@ for (i in c(1:60)){
     
     comparativo[i,5] <- (v2 - v1)^2
 }
+
+reclamacoes_avaliacoes %>%  write_csv("C:/Users/Suela/Desktop/metodologia/reclamacoes-do-gf/data/3-avaliacao-humana/reclamacoes-avaliadas-20190515.csv")
+
+
