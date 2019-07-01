@@ -66,4 +66,3 @@ sentimentos = palavras_com_sentimento %>%
 sentimentos %>% 
     write_csv(here("data/5-sentimentos/sentimento-20181113.csv"))
 ```
-

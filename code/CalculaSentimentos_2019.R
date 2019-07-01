@@ -7,14 +7,14 @@ library(lexiconPT)
 theme_set(theme_bw())
 
 #Selecionar arquivos
-avaliacoes <- read.csv(file = "C:/Users/Suela/Desktop/metodologia/reclamacoes-do-gf/data/3-avaliacao-humana/avaliacoes20190515.csv")
-reclamacoes <-  read_csv(file = "C:/Users/Suela/Desktop/metodologia/reclamacoes-do-gf/data/1-reclamacoes-selecionadas/reclamacoes-avaliadas.csv")
+avaliacoes <- read_csv(file = "./data/3-avaliacao-humana/avaliacoes20190515.csv")
+reclamacoes <-  read_csv(file = "./data/1-reclamacoes-selecionadas/reclamacoes-avaliadas.csv")
 
 #Mudar nome de colunas de avaliacoes
 avaliacoes <- avaliacoes %>% 
   select(avaliador = `Matricula`, 
-         id = `ID.da.reclamacao`, 
-         insatisfacao = `Grau.de.insatisfacao`)
+         id = `ID da reclamacao`, 
+         insatisfacao = `Grau de insatisfacao`)
 
 #calcular insatifacao com Moda
 avaliacoes <- avaliacoes %>% 
@@ -51,7 +51,7 @@ sent <- sentiLex_lem_PT02
 
 glimpse(op30)
 
-palavra_a_palavra = reclamacoes %>% 
+palavra_a_palavra <- reclamacoes %>% 
   select(id, reclamacao) %>% 
   unnest_tokens(termo, reclamacao)
 
@@ -89,9 +89,12 @@ reclamacoes_avaliacoes["insatisfacao_sent"] <- sentimentos["conv_sent"]
 reclamacoes_avaliacoes %>% ggplot(aes(x=insatisfacao_op_30, y=reclamacao.length)) + geom_point()
 reclamacoes_avaliacoes %>% ggplot(aes(x=insatisfacao_sent, y=reclamacao.length)) + geom_point()
 
-#Calcula erro através de comparativo
+reclamacoes_avaliacoes %>% ggplot(aes(x=grau_insatisfacao,y=reclamacao.length)) + geom_point()
+
+#Calcula erro atrav?s de comparativo
 comparativo <- cbind(reclamacoes_avaliacoes$grau_insatisfacao,reclamacoes_avaliacoes$insatisfacao_op_30,reclamacoes_avaliacoes$insatisfacao_sent)
 comparativo <- cbind(comparativo, 0,0)
+
 for (i in c(1:60)){
     v1 <- comparativo[i,1]
     v2 <- comparativo[i,2]
@@ -102,6 +105,16 @@ for (i in c(1:60)){
     
     comparativo[i,5] <- (v2 - v1)^2
 }
+comparativo <- as.data.frame(x = comparativo)
+comparativo <- comparativo %>% select(
+  grau_insatisfacao = `V1`,
+  op30 = `V2`,
+  SENT = `V3`,
+  err_op30 = `V4`,
+  err_sent = `V5`
+)
+
+
 
 reclamacoes_avaliacoes %>%  write_csv("C:/Users/Suela/Desktop/metodologia/reclamacoes-do-gf/data/3-avaliacao-humana/reclamacoes-avaliadas-20190515.csv")
 
